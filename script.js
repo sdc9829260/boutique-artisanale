@@ -1,3 +1,6 @@
+// script.js
+
+const stripe = Stripe("pk_test_1234567890abcdef"); // À remplacer par ta clé publique Stripe réelle
 let panier = [];
 
 function mettreAJourPanier() {
@@ -25,5 +28,23 @@ document.addEventListener("DOMContentLoaded", () => {
       panier.push({ nom, prix });
       mettreAJourPanier();
     });
+  });
+
+  document.getElementById("payerStripe").addEventListener("click", async () => {
+    // Cette partie simule une requête vers un backend
+    const response = await fetch("https://votre-backend.com/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ items: panier })
+    });
+
+    const session = await response.json();
+
+    const result = await stripe.redirectToCheckout({ sessionId: session.id });
+    if (result.error) {
+      alert(result.error.message);
+    }
   });
 });
